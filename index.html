@@ -3,10 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>فريق النخبة</title>
+    <title>فريق النخبة - بالإصدار السحابي</title>
     
-    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;700;900&display=swap" rel="stylesheet">
+    <!-- خط Tajawal من Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght=400;700;900&display=swap" rel="stylesheet">
+    <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
+    <!-- تضمين مكتبة Multi-select (لتحديد اللاعبين المستدعين) -->
     <link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/css/select2.min.css" rel="stylesheet" />
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/js/select2.min.js"></script>
@@ -26,18 +29,15 @@
             color: var(--color-text);
         }
         /* تطبيق نظام الألوان والظل لـ Tailwind */
-        .btn-primary { background-color: var(--color-primary); }
-        .btn-success { background-color: var(--color-success); }
-        .btn-danger { background-color: var(--color-danger); }
-        .btn-primary:hover { background-color: #4338ca; }
-        .btn-success:hover { background-color: #15803d; }
-        .btn-danger:hover { background-color: #b91c1c; }
+        .btn-primary { @apply bg-[var(--color-primary)] hover:bg-[#4338ca] transition duration-150; }
+        .btn-success { @apply bg-[var(--color-success)] hover:bg-[#15803d] transition duration-150; }
+        .btn-danger { @apply bg-[var(--color-danger)] hover:bg-[#b91c1c] transition duration-150; }
         /* جميع الصور لها تأثير ظل خفيف (shadow-md) */
         .shadow-image {
             box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -2px rgba(0, 0, 0, 0.1);
         }
         .nav-link {
-             @apply text-gray-700 hover:text-var(--color-primary) transition font-medium flex items-center p-2 rounded-md;
+             @apply text-gray-700 hover:text-[var(--color-primary)] transition font-medium flex items-center p-2 rounded-md;
         }
         /* تعديل Select2 ليناسب الاتجاه من اليمين لليسار */
         .select2-container .select2-selection--single,
@@ -70,54 +70,192 @@
             margin-left: 5px;
             margin-right: 5px;
         }
+
+        /* تنسيق الملعب البصري (Pitch Visualizer) */
+        #pitch-container {
+            width: 100%;
+            max-width: 400px; /* حجم ثابت نسبياً للملعب */
+            height: 550px; 
+            background: linear-gradient(to top, #16a34a 0%, #16a34a 100%); /* خلفية خضراء */
+            border: 4px solid white;
+            border-radius: 10px;
+            position: relative;
+            margin: 20px auto;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.3);
+            overflow: hidden;
+        }
+
+        /* خطوط الملعب (بالأبيض) */
+        #pitch-container::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: white; /* خط المنتصف */
+        }
+        .pitch-line {
+            position: absolute;
+            background: white;
+        }
+        .pitch-goal { /* منطقة المرمى السفلية (هدفنا) */
+            height: 12%;
+            width: 80%;
+            left: 10%;
+            bottom: 0;
+            border: 2px solid white;
+            border-bottom: none;
+            border-radius: 5px 5px 0 0;
+        }
+        .pitch-goal-circle { /* دائرة منتصف الملعب */
+            width: 80px;
+            height: 80px;
+            border: 2px solid white;
+            border-radius: 50%;
+            position: absolute;
+            top: calc(50% - 40px);
+            left: calc(50% - 40px);
+        }
+        
+        /* دائرة اللاعب (المركز) */
+        .player-position {
+            position: absolute;
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            cursor: pointer;
+            z-index: 10;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+            border: 3px solid white; 
+            background-color: var(--color-primary);
+        }
+
+        .player-position:hover {
+            transform: scale(1.1);
+            border-color: #ffc107; /* لون أصفر عند التحويم */
+        }
+
+        .player-position img {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            object-fit: cover;
+        }
+
+        .player-position .rating-badge {
+            position: absolute;
+            top: -10px; 
+            right: -10px;
+            background-color: var(--color-success);
+            color: white;
+            font-size: 0.75rem;
+            font-weight: bold;
+            padding: 2px 6px;
+            border-radius: 9999px; /* rounded-full */
+            border: 2px solid white;
+        }
+
+        /* تنسيق رسالة التحميل */
+        #loading-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(255, 255, 255, 0.8);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 100;
+            flex-direction: column;
+            font-size: 1.5rem;
+            color: var(--color-primary);
+        }
+        .spinner {
+            border: 4px solid rgba(0, 0, 0, 0.1);
+            border-top: 4px solid var(--color-primary);
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin-bottom: 10px;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
     </style>
 </head>
-<body onload="show('home'); renderTeam(); renderMatches(); initSelect2(); renderPosts();">
+<body onload="initApp();">
+    
+    <!-- شاشة التحميل الأولية -->
+    <div id="loading-overlay" class="flex">
+        <div class="spinner"></div>
+        <p>جاري تحميل البيانات من السحابة...</p>
+    </div>
 
+    <!-- 3. هيكل الموقع: رأس الموقع (Header) -->
     <header class="bg-white shadow-md sticky top-0 z-10">
         <div class="container mx-auto p-4 flex justify-between items-center flex-wrap">
+            <!-- الشعار -->
             <div class="flex items-center space-x-2 space-x-reverse">
-                <img id="logo-img" src="images/shaar.png" alt="شعار النخبة" class="h-10 w-10 object-cover rounded-full shadow-image">
+                <img id="logo-img" src="images/shaar.png" alt="شعار النخبة" onerror="this.onerror=null;this.src='https://placehold.co/40x40/4f46e5/ffffff?text=N';" class="h-10 w-10 object-cover rounded-full shadow-image">
                 <h1 class="text-2xl font-black text-gray-900">النخبة</h1>
             </div>
 
+            <!-- قوائم التنقل -->
             <nav class="flex items-center space-x-4 space-x-reverse mt-2 md:mt-0">
                 <a href="#" onclick="show('home')" class="nav-link"><span class="ml-1">🏠</span> الرئيسية</a>
                 <a href="#" onclick="show('team')" class="nav-link"><span class="ml-1">👥</span> الفريق</a>
                 <a href="#" onclick="show('matches')" class="nav-link"><span class="ml-1">📅</span> المباريات</a>
 
+                <!-- زر المدير/الإدارة (يظهر بعد تفعيل الرمز) -->
                 <a href="#" onclick="show('manager-dashboard')" id="manager-link" class="nav-link hidden"><span class="ml-1">⚙️</span> إدارة</a>
 
+                <!-- حالة المستخدم (تتغير بعد التفعيل) -->
                 <div id="auth-status-container" class="flex items-center space-x-2 space-x-reverse bg-gray-100 p-2 rounded-lg">
-                    <span id="user-display-name" class="text-sm font-bold text-gray-700">وضع الزائر</span>
+                    <span id="user-display-name" class="text-sm font-bold text-gray-700">وضع الزائر (غير مفعل)</span>
                 </div>
             </nav>
         </div>
     </header>
 
+    <!-- محتوى الصفحة -->
     <main class="container mx-auto p-4 max-w-6xl">
+        <!-- رسالة وضع المدير -->
         <div id="manager-status" class="hidden bg-green-100 border-r-4 border-green-500 text-green-700 p-4 mb-4" role="alert">
             <p class="font-bold">وضع المدير مفعل</p>
             <p class="text-sm">يمكنك الآن إضافة وتعديل اللاعبين وإنهاء المباريات ونشر المنشورات.</p>
         </div>
         
+        <!-- رسالة التفعيل المخفية (تظهر عند التفعيل) -->
         <div id="activation-message" class="hidden fixed top-0 right-0 left-0 bg-green-500 text-white p-4 text-center z-50 shadow-2xl">
             ✅ تم تفعيل وضع المدير بنجاح!
         </div>
 
+        <!-- 4.1 الصفحة الرئيسية -->
         <section id="home" class="page-content hidden">
             <div class="text-center p-8 bg-white rounded-lg shadow-lg mb-6">
                 <h2 class="text-3xl font-extrabold mb-4 text-gray-800">أخبار وإعلانات النخبة</h2>
-                <p class="text-lg text-gray-600">هنا تجدون آخر أخبار الفريق وإعلانات المباريات.</p>
+                <p class="text-lg text-gray-600">هنا تجدون آخر أخبار الفريق وإعلانات المباريات. (البيانات سحابية)</p>
             </div>
             
+            <!-- قسم عرض المنشورات -->
             <div id="posts-container" class="space-y-6">
-                </div>
+                <!-- المنشورات سيتم إدخالها هنا بواسطة JavaScript -->
+            </div>
         </section>
 
+        <!-- 4.2 صفحة الفريق -->
         <section id="team" class="page-content hidden">
             <h2 class="text-3xl font-bold mb-6">قائمة اللاعبين 👥</h2>
-            <input type="text" id="player-search" onkeyup="filterTeam()" placeholder="البحث باسم اللاعب..." class="w-full p-3 mb-6 border border-gray-300 rounded-lg focus:ring-[var(--color-primary)] focus:border-[var(--color-primary)] text-right">
+            <!-- *** حقل البحث هو أداة التفعيل السرية الآن *** -->
+            <input type="text" id="player-search" onkeyup="filterTeam()" placeholder="البحث باسم اللاعب (الرمز السري لتفعيل وضع المدير)..." class="w-full p-3 mb-6 border border-gray-300 rounded-lg focus:ring-[var(--color-primary)] focus:border-[var(--color-primary)] text-right">
             
             <div id="team-list" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
             </div>
@@ -126,11 +264,13 @@
             </div>
         </section>
         
+        <!-- 4.3 صفحة اللاعب الفردية -->
         <section id="player-profile" class="page-content hidden">
             <div id="player-details" class="bg-white p-8 rounded-lg shadow-lg">
             </div>
         </section>
 
+        <!-- 4.4 صفحة المباريات -->
         <section id="matches" class="page-content hidden">
             <h2 class="text-3xl font-bold mb-6">المباريات 📅</h2>
             <div id="matches-list" class="space-y-4">
@@ -140,23 +280,28 @@
             </div>
         </section>
 
+        <!-- 4.5 صفحة تفاصيل المباراة + تسجيل الإحصائيات (مدمج الآن) -->
         <section id="match-details" class="page-content hidden">
             <div id="match-info" class="bg-white p-8 rounded-lg shadow-lg">
             </div>
             
+            <!-- نموذج تسجيل الإحصائيات -->
             <div id="match-stats-form" class="mt-8 p-6 bg-gray-100 rounded-lg shadow hidden">
                 <h3 class="text-2xl font-black mb-4 text-gray-800 border-b pb-2">تسجيل نتائج وإحصائيات المباراة</h3>
                 
-                 <div class="p-4 bg-red-50 border border-red-200 rounded-lg mb-6">
+                 <!-- قسم النتيجة والملاحظات -->
+                <div class="p-4 bg-red-50 border border-red-200 rounded-lg mb-6">
                     <h4 class="text-xl font-bold mb-3 text-red-700">النتيجة والملاحظات</h4>
                     <div class="grid grid-cols-2 gap-4 mb-4">
+                        <!-- أهدافنا (سيتم حسابها تلقائيًا) -->
                         <div class="text-center p-2 border rounded-lg bg-white">
                             <label class="block text-sm font-medium text-gray-700">أهداف فريقنا (المسجلة من اللاعبين)</label>
                             <p id="our-goals-display-form" class="text-3xl font-extrabold text-green-600">0</p>
                         </div>
+                        <!-- أهداف الخصم (إدخال يدوي) -->
                         <div>
                             <label for="opponent-goals-form" class="block text-sm font-medium text-gray-700 text-right">أهداف الخصم</label>
-                            <input type="number" id="opponent-goals-form" placeholder="0" value="0" min="0" oninput="updateOurGoals()" class="w-full p-2 border rounded text-center text-2xl font-bold mt-1">
+                            <input type="number" id="opponent-goals-form" placeholder="0" value="0" min="0" class="w-full p-2 border rounded text-center text-2xl font-bold mt-1">
                         </div>
                     </div>
                     
@@ -167,18 +312,22 @@
                 </div>
 
 
+                <!-- قسم إحصائيات اللاعبين -->
                 <h4 class="text-xl font-bold mb-3 border-b pb-2">تقييم اللاعبين والأهداف والتمريرات الحاسمة</h4>
                 <div id="player-stats-inputs-form" class="space-y-4">
-                    </div>
+                    <!-- حقول الإدخال يتم ملؤها عند الضغط على "إنهاء المباراة" -->
+                </div>
                 <button onclick="saveMatchStats()" class="btn-primary text-white px-4 py-3 rounded mt-6 w-full text-lg font-bold transition duration-150">حفظ الإحصائيات وتحديث التقييمات</button>
             </div>
         </section>
 
+        <!-- 4.6 لوحة المدير (Manager Dashboard) -->
         <section id="manager-dashboard" class="page-content hidden">
             <div class="bg-white p-8 rounded-lg shadow-lg">
                 <h2 class="text-3xl font-bold mb-6 text-gray-800">⚙️ لوحة تحكم المدير</h2>
                 <p class="text-lg text-gray-600 mb-6">هنا يمكنك إدارة قائمة الفريق والمباريات والمنشورات.</p>
                 
+                <!-- قسم إدارة المنشورات -->
                 <div class="mb-8 p-6 bg-yellow-50 border border-yellow-200 rounded-lg">
                     <h3 class="text-xl font-bold mb-4 text-yellow-800 border-b pb-2">نشر إعلان / خبر جديد 📢</h3>
                     <input type="text" id="post-title" placeholder="عنوان المنشور (مطلوب)" class="w-full p-2 border rounded text-right mb-3">
@@ -187,77 +336,214 @@
                     <button onclick="addPost()" class="btn-primary text-white px-4 py-2 rounded mt-2 w-full transition duration-150">نشر الإعلان</button>
                 </div>
 
+                <!-- قسم إدارة اللاعبين -->
                 <div class="mb-8 p-6 bg-blue-50 border border-blue-200 rounded-lg">
                     <h3 class="text-xl font-bold mb-4 text-blue-800 border-b pb-2">إضافة لاعب جديد</h3>
                     <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
                         <input type="text" id="new-player-name" placeholder="اسم اللاعب (مطلوب)" class="p-2 border rounded text-right">
-                        <input type="text" id="new-player-image" placeholder="صورة اللاعب (مثال: ali.jpg)" value="player.jpg" class="p-2 border rounded text-right">
+                        <input type="text" id="new-player-image" placeholder="صورة اللاعب (مثال: player.jpg)" value="player.jpg" class="p-2 border rounded text-right">
                     </div>
                     <button onclick="addPlayer()" class="btn-primary text-white px-4 py-2 rounded mt-4 w-full transition duration-150">إضافة اللاعب</button>
                 </div>
 
+                <!-- قسم إضافة مباراة جديدة -->
                 <div id="add-match-section" class="p-6 bg-green-50 border border-green-200 rounded-lg">
                     <h3 class="text-xl font-bold mb-4 text-green-800 border-b pb-2">إضافة مباراة جديدة</h3>
                     <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
                         <input type="text" id="match-opponent" placeholder="اسم الخصم" class="p-2 border rounded text-right">
                         <input type="datetime-local" id="match-datetime" class="p-2 border rounded text-right">
-                        <select id="match-pitch" class="p-2 border rounded text-right">
-                            <option value="">صورة الملعب</option>
-                            <option value="ملعب.jpg">ملعب 1</option>
-                            <option value="ملعب2.jpg">ملعب 2</option>
+                        <!-- تم استبدال اختيار الملعب باختيار التشكيلة -->
+                        <select id="match-formation" onchange="updateFormationVisualizer()" class="p-2 border rounded text-right">
+                            <option value="">اختر التشكيلة (1 حارس + 5 لاعبين)</option>
+                            <option value="3-1-1">3-1-1 (دفاع-وسط-هجوم)</option>
+                            <option value="2-2-1">2-2-1 (دفاع-وسط-هجوم)</option>
+                            <option value="2-1-2">2-1-2 (دفاع-وسط-هجوم)</option>
                         </select>
                     </div>
+                    
+                    <!-- حقل اختيار اللاعبين المستدعين -->
                     <label for="match-squad" class="block text-sm font-medium text-gray-700 text-right mb-1">اللاعبون المستدعون (الحضور)</label>
-                    <select id="match-squad" multiple="multiple" class="w-full">
-                        </select>
+                    <select id="match-squad" multiple="multiple" class="w-full mb-6">
+                        <!-- الخيارات تملأ تلقائيا بواسطة JavaScript -->
+                    </select>
+
+                    <!-- عرض الملعب التفاعلي -->
+                    <div id="formation-visualizer" class="hidden">
+                        <h4 class="text-lg font-bold mb-2 text-gray-700 text-center">تحديد المراكز الأساسية (6 لاعبين)</h4>
+                        <div id="pitch-container" class="relative">
+                            <div class="pitch-line pitch-goal"></div>
+                            <div class="pitch-line pitch-goal-circle"></div>
+                            <!-- سيتم وضع دوائر اللاعبين هنا بواسطة JS -->
+                        </div>
+                        <p id="assignment-error" class="text-sm text-red-600 text-center mt-2 hidden">الرجاء تعيين لاعب لجميع المراكز الأساسية (6).</p>
+                    </div>
+
                     <button onclick="addMatch()" class="btn-success text-white px-4 py-2 rounded mt-4 w-full text-lg font-bold transition duration-150">إضافة المباراة</button>
                 </div>
             </div>
         </section>
 
     </main>
+    
+    <!-- مودال اختيار اللاعب للمركز -->
+    <div id="player-position-modal" class="hidden fixed inset-0 bg-gray-800 bg-opacity-75 z-50 flex items-center justify-center p-4">
+        <div class="bg-white p-6 rounded-lg shadow-xl w-full max-w-sm">
+            <h3 class="text-xl font-bold mb-4 text-gray-800 text-right">اختر اللاعب للمركز <span id="modal-position-name" class="text-[var(--color-primary)]"></span></h3>
+            <select id="modal-player-select" class="w-full p-2 border rounded text-right mb-4"></select>
+            <div class="flex justify-end space-x-2 space-x-reverse">
+                <button onclick="assignPlayerToPosition()" class="btn-primary text-white px-4 py-2 rounded transition">تعيين</button>
+                <button onclick="closePositionModal()" class="bg-gray-300 text-gray-800 px-4 py-2 rounded hover:bg-gray-400 transition">إلغاء</button>
+            </div>
+        </div>
+    </div>
 
-    <script>
-        // *** هذا الجزء يعمل الآن بالكامل في ذاكرة المتصفح (Client-side) ***
+    <!-- 8. الجافاسكريبت والوظائف -->
+    <!-- تحميل مكتبات Firebase -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+        import { getAuth, signInAnonymously, signInWithCustomToken } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { getFirestore, doc, addDoc, onSnapshot, collection, updateDoc, getDoc, setLogLevel } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
         
+        // ** المتغيرات العامة التي سيتم استخدامها **
+        let db;
+        let auth;
+        let appId;
+        let userId;
+
         // ** الرمز السري لتفعيل وضع المدير **
         const MANAGER_SECRET_CODE = "JEHAD112233JEHAD"; 
-        
         let isManagerMode = false; 
         let activeMatchId = null;
-        let nextPlayerId = 12;
 
-        // 7.4 تحديث التقييمات: بيانات اللاعبين
-        let players = [
-            { id: 1, name: "ميمد", rating: 0.0, goals: 0, assists: 0, image: "ميمد.jpg" }, 
-            { id: 2, name: "مصباح", rating: 0.0, goals: 0, assists: 0, image: "مصباح.jpg" }, 
-            { id: 3, name: "ميلاد", rating: 0.0, goals: 0, assists: 0, image: "ميلاد.jpg" }, 
-            { id: 4, name: "ديدي", rating: 0.0, goals: 0, assists: 0, image: "ديدي.jpg" }, 
-            { id: 5, name: "خرخر", rating: 0.0, goals: 0, assists: 0, image: "خرخر.jpg" }, 
-            { id: 6, name: "عبدالسلام", rating: 0.0, goals: 0, assists: 0, image: "عبدالسلام.jpg" }, 
-            { id: 7, name: "جهاد", rating: 0.0, goals: 0, assists: 0, image: "جهاد.jpg" }, 
-            { id: 8, name: "حسن", rating: 0.0, goals: 0, assists: 0, image: "حسن.jpg" }, 
-            { id: 9, name: "حفيظ", rating: 0.0, goals: 0, assists: 0, image: "حفيظ.jpg" }, 
-            { id: 10, name: "علي", rating: 0.0, goals: 0, assists: 0, image: "علي.jpg" }, 
-            { id: 11, name: "أسامة", rating: 0.0, goals: 0, assists: 0, image: "أسامة.jpg" }, 
-        ];
-
+        // ** المتغيرات المحلية لتخزين بيانات Firestore المحدثة **
+        let players = []; 
         let matches = []; 
-
-        // مصفوفة المنشورات (Posts)
-        let posts = [
-            { 
-                id: 1, 
-                title: "صورة الفريق الرسمية", 
-                content: "ندعوكم لمشاهدة صورة فريق النخبة الرسمية، كل التوفيق لأبطالنا في الموسم القادم.", 
-                image: "sora.png", 
-                date: new Date().toLocaleString('ar-EG'),
-                pinned: true
-            }
-        ];
+        let posts = []; 
         
+        // حالة التشكيلة النشطة
+        let currentFormationAssignment = {
+            formation: '',
+            positions: []
+        };
+        let activePositionIndex = -1; // مؤشر للمركز الذي تم النقر عليه
+
+        // تعريف إحداثيات التشكيلات (X, Y) بالنسبة المئوية للملعب (من أسفل اليمين)
+        // Y=90 هو المرمى (الأسفل)، Y=10 هو الهجوم (الأعلى)
+        const FORMATIONS_COORDS = {
+            '3-1-1': [
+                { name: 'حارس', type: 'GK', x: 50, y: 90 },
+                // الدفاع
+                { name: 'مدافع يمين', type: 'D', x: 25, y: 75 },
+                { name: 'مدافع وسط', type: 'D', x: 50, y: 70 },
+                { name: 'مدافع يسار', type: 'D', x: 75, y: 75 },
+                // الوسط
+                { name: 'وسط', type: 'M', x: 50, y: 45 },
+                // الهجوم
+                { name: 'مهاجم', type: 'F', x: 50, y: 20 },
+            ],
+            '2-2-1': [
+                { name: 'حارس', type: 'GK', x: 50, y: 90 },
+                // الدفاع
+                { name: 'مدافع يمين', type: 'D', x: 30, y: 75 },
+                { name: 'مدافع يسار', type: 'D', x: 70, y: 75 },
+                // الوسط
+                { name: 'وسط يمين', type: 'M', x: 30, y: 45 },
+                { name: 'وسط يسار', type: 'M', x: 70, y: 45 },
+                // الهجوم
+                { name: 'مهاجم', type: 'F', x: 50, y: 20 },
+            ],
+            '2-1-2': [
+                { name: 'حارس', type: 'GK', x: 50, y: 90 },
+                // الدفاع
+                { name: 'مدافع يمين', type: 'D', x: 30, y: 80 },
+                { name: 'مدافع يسار', type: 'D', x: 70, y: 80 },
+                // الوسط
+                { name: 'وسط', type: 'M', x: 50, y: 55 },
+                // الهجوم
+                { name: 'مهاجم يمين', type: 'F', x: 30, y: 25 },
+                { name: 'مهاجم يسار', type: 'F', x: 70, y: 25 },
+            ]
+        };
+
+        // تفعيل تسجيل الأخطاء (Debug) لـ Firestore
+        setLogLevel('Debug');
+
+        // 9. وظيفة تهيئة التطبيق والتحقق من المصادقة
+        window.initApp = async function() {
+            try {
+                // إعداد متغيرات البيئة الأساسية
+                appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
+                const firebaseConfig = JSON.parse(typeof __firebase_config !== 'undefined' ? __firebase_config : '{}');
+                const initialAuthToken = typeof __initial_auth_token !== 'undefined' ? __initial_auth_token : null;
+
+                // تهيئة Firebase
+                const app = initializeApp(firebaseConfig);
+                db = getFirestore(app);
+                auth = getAuth(app);
+
+                // المصادقة: محاولة تسجيل الدخول بالرمز المخصص أو كمجهول
+                if (initialAuthToken) {
+                    await signInWithCustomToken(auth, initialAuthToken);
+                } else {
+                    await signInAnonymously(auth);
+                }
+                
+                // تحديد معرّف المستخدم
+                userId = auth.currentUser?.uid || crypto.randomUUID();
+
+                // بدء الاستماع لبيانات التطبيق في الوقت الفعلي
+                setupDataListeners();
+                
+                // إخفاء شاشة التحميل وإظهار الصفحة الرئيسية
+                document.getElementById('loading-overlay').classList.add('hidden');
+                show('home');
+
+            } catch (error) {
+                console.error("Firebase Initialization or Auth Error:", error);
+                document.getElementById('loading-overlay').innerHTML = `<p class="text-red-600">خطأ في الاتصال بالخدمة. يرجى مراجعة console.</p>`;
+            }
+        }
+        
+        // 10. وظيفة مسارات Firestore (عامة)
+        function getCollectionPath(collectionName) {
+            return `artifacts/${appId}/public/data/${collectionName}`;
+        }
+
+        // 11. وظيفة إعداد المستمعين (Real-time listeners)
+        function setupDataListeners() {
+            // الاستماع لقائمة اللاعبين
+            onSnapshot(collection(db, getCollectionPath('players')), (snapshot) => {
+                players = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+                renderTeam();
+                initSelect2(); // إعادة تهيئة قائمة الاختيار عند تحديث اللاعبين
+                updateFormationVisualizer(); // تحديث قائمة اللاعبين في المودال
+                console.log("Players updated:", players.length);
+            }, (error) => {
+                console.error("Error loading players:", error);
+            });
+
+            // الاستماع لقائمة المباريات
+            onSnapshot(collection(db, getCollectionPath('matches')), (snapshot) => {
+                matches = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+                renderMatches();
+                console.log("Matches updated:", matches.length);
+            }, (error) => {
+                console.error("Error loading matches:", error);
+            });
+
+            // الاستماع لقائمة المنشورات
+            onSnapshot(collection(db, getCollectionPath('posts')), (snapshot) => {
+                posts = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+                renderPosts();
+                console.log("Posts updated:", posts.length);
+            }, (error) => {
+                console.error("Error loading posts:", error);
+            });
+        }
+
+
         // 7.1 التنقل: وظيفة الانتقال بين الصفحات
-        function show(sectionId, playerId = null, matchId = null) {
+        window.show = function(sectionId, playerId = null, matchId = null) {
             document.querySelectorAll('.page-content').forEach(section => {
                 section.classList.add('hidden');
             });
@@ -270,35 +556,13 @@
             } 
         }
 
-        // *** وظيفة تفعيل وضع المدير السرية (عبر البحث) ***
-        function activateManagerMode() {
-            if (isManagerMode) return; // تم التفعيل مسبقاً
-
-            isManagerMode = true;
-            document.getElementById('manager-link').classList.remove('hidden');
-            document.getElementById('manager-status').classList.remove('hidden');
-            document.getElementById('user-display-name').textContent = "مرحباً، المدير";
-            
-            // إظهار رسالة التفعيل العلوية
-            const activationMsg = document.getElementById('activation-message');
-            activationMsg.classList.remove('hidden');
-            setTimeout(() => {
-                activationMsg.classList.add('hidden');
-            }, 3000); // إخفاء الرسالة بعد 3 ثواني
-            
-            // مسح حقل البحث
-            document.getElementById('player-search').value = '';
-            renderTeam(); 
-
-            // الانتقال إلى لوحة التحكم
-            show('manager-dashboard'); 
-        }
-        // **********************************
-
-        function initSelect2() {
+        // تهيئة الـ Select2 لقائمة اللاعبين المستدعين
+        window.initSelect2 = function() {
             const selectSquad = $('#match-squad');
             selectSquad.empty(); 
             const sortedPlayers = [...players].sort((a, b) => a.name.localeCompare(b.name, 'ar'));
+            
+            // التأكد من أن جميع اللاعبين لديهم 'id' كمعرّف Firestore
             sortedPlayers.forEach(player => {
                 selectSquad.append(new Option(player.name, player.id, false, false));
             });
@@ -307,72 +571,80 @@
                 allowClear: true,
                 dir: "rtl" 
             });
+            
+            // عند تغيير قائمة المستدعين، يجب تحديث قائمة المودال (للتشكيلة)
+            selectSquad.on('change', function() {
+                updatePositionModalOptions();
+            });
         }
         
-        function addPost() {
+        // 12. وظيفة إضافة منشور (تكتب إلى Firestore)
+        window.addPost = async function() {
             if (!isManagerMode) {
-                alert('يجب تفعيل وضع المدير لنشر المنشورات.');
+                console.error('يجب تفعيل وضع المدير لنشر المنشورات.');
                 return;
             }
             
             const title = document.getElementById('post-title').value.trim();
             const content = document.getElementById('post-content').value.trim();
-            let image = document.getElementById('post-image').value.trim();
+            let image = document.getElementById('post-image').value.trim() || "news.jpg";
 
             if (!title || !content) {
                 alert('الرجاء إدخال عنوان ومحتوى المنشور.');
                 return;
             }
             
-            if (!image) {
-                image = "news.jpg"; 
-            }
-
-            const newPost = {
-                id: Date.now(),
+            const newPostData = {
                 title: title,
                 content: content,
                 image: image,
-                date: new Date().toLocaleString('ar-EG'),
-                pinned: false
+                date: new Date().toISOString(),
+                pinned: false,
+                managerId: userId
             };
 
-            posts.unshift(newPost); 
-            renderPosts(); 
+            try {
+                await addDoc(collection(db, getCollectionPath('posts')), newPostData);
+                alert('تم نشر المنشور بنجاح!');
+                // مسح الحقول والانتقال
+                document.getElementById('post-title').value = '';
+                document.getElementById('post-content').value = '';
+                document.getElementById('post-image').value = ''; 
+                show('home'); 
 
-            document.getElementById('post-title').value = '';
-            document.getElementById('post-content').value = '';
-            document.getElementById('post-image').value = ''; 
-
-            alert('تم نشر المنشور بنجاح!');
-            show('home'); 
+            } catch (e) {
+                console.error("Error adding document: ", e);
+                alert('فشل في نشر المنشور.');
+            }
         }
         
-        function renderPosts() {
+        window.renderPosts = function() {
             const postsContainer = document.getElementById('posts-container');
             postsContainer.innerHTML = '';
 
+            // الفرز محليًا: المثبت أولاً، ثم حسب التاريخ (الأحدث أولاً)
             const sortedPosts = [...posts].sort((a, b) => {
                 if (a.pinned && !b.pinned) return -1;
                 if (!a.pinned && b.pinned) return 1;
-                return b.id - a.id; 
+                return new Date(b.date) - new Date(a.date);
             });
 
             sortedPosts.forEach(post => {
+                const dateDisplay = new Date(post.date).toLocaleDateString('ar-EG', { year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit' });
                 const pinnedBadge = post.pinned ? '<span class="text-sm bg-red-500 text-white px-2 py-0.5 rounded-full ml-2">📌 مثبت</span>' : '';
                 
                 let imageHTML = '';
-                if (post.image && post.image !== 'news.jpg') {
-                    imageHTML = `<img src="images/${post.image}" alt="صورة المنشور" onerror="this.onerror=null;this.src='images/news.jpg';" class="w-full max-h-72 object-cover rounded-lg shadow-md mb-4">`;
-                } else if (post.image === 'sora.png' && post.pinned) {
-                    imageHTML = `<img src="images/sora.png" alt="صورة الفريق" onerror="this.onerror=null;this.src='images/news.jpg';" class="w-full max-h-72 object-cover rounded-lg shadow-md mb-4">`;
+                if (post.image) {
+                    // استخدام مكان احتياطي في حالة عدم تحميل الصورة
+                    const fallbackImage = post.image === 'sora.png' ? 'images/sora.png' : 'https://placehold.co/400x200/cccccc/333333?text=N-Post';
+                    imageHTML = `<img src="images/${post.image}" alt="صورة المنشور" onerror="this.onerror=null;this.src='${fallbackImage}';" class="w-full max-h-72 object-cover rounded-lg shadow-md mb-4">`;
                 }
                 
                 const postHTML = `
                     <div class="bg-white p-6 rounded-lg shadow-xl border-r-4 ${post.pinned ? 'border-red-600' : 'border-blue-600'}">
                         <div class="flex items-center justify-between mb-4">
                              <h3 class="text-2xl font-black text-gray-900 flex items-center">${post.title} ${pinnedBadge}</h3>
-                            <p class="text-sm text-gray-500">${post.date}</p>
+                            <p class="text-sm text-gray-500">${dateDisplay}</p>
                         </div>
                         ${imageHTML}
                         <p class="text-gray-700 leading-relaxed">${post.content}</p>
@@ -382,22 +654,19 @@
             });
         }
         
-        function addPlayer() {
+        // 13. وظيفة إضافة لاعب (تكتب إلى Firestore)
+        window.addPlayer = async function() {
             if (!isManagerMode) {
-                alert('يجب تفعيل وضع المدير لإضافة اللاعبين.');
+                console.error('يجب تفعيل وضع المدير لإضافة اللاعبين.');
                 return;
             }
             
             const name = document.getElementById('new-player-name').value.trim();
-            let image = document.getElementById('new-player-image').value.trim();
+            let image = document.getElementById('new-player-image').value.trim() || "player.jpg";
             
             if (!name) {
                 alert('الرجاء إدخال اسم اللاعب.');
                 return;
-            }
-            
-            if (!image) {
-                image = "player.jpg"; 
             }
             
             if (players.some(p => p.name === name)) {
@@ -406,26 +675,29 @@
             }
 
             const newPlayer = {
-                id: nextPlayerId++,
                 name: name,
                 rating: 0.0,
                 goals: 0,
                 assists: 0, 
-                image: image 
+                image: image,
+                matchesPlayed: 0
             };
 
-            players.push(newPlayer);
-            renderTeam(); 
-            initSelect2(); 
+            try {
+                await addDoc(collection(db, getCollectionPath('players')), newPlayer);
+                alert(`تم إضافة اللاعب ${name} بنجاح!`);
 
-            document.getElementById('new-player-name').value = '';
-            document.getElementById('new-player-image').value = 'player.jpg';
+                document.getElementById('new-player-name').value = '';
+                document.getElementById('new-player-image').value = 'player.jpg';
 
-            alert(`تم إضافة اللاعب ${name} بنجاح!`);
+            } catch (e) {
+                console.error("Error adding player: ", e);
+                alert('فشل في إضافة اللاعب.');
+            }
         }
 
 
-        function renderTeam(filteredPlayers = players) {
+        window.renderTeam = function(filteredPlayers = players) {
             const teamList = document.getElementById('team-list');
             teamList.innerHTML = '';
             
@@ -441,10 +713,11 @@
             sortedPlayers.forEach(player => {
                 const displayRating = player.rating.toFixed(1) > 0.0 ? player.rating.toFixed(1) : 'N/A';
                 const ratingColor = player.rating.toFixed(1) > 0.0 ? 'text-[var(--color-primary)]' : 'text-gray-400';
-
+                
+                // نستخدم player.id (معرّف Firestore) كـ playerId
                 const playerCard = `
-                    <div onclick="show('player-profile', ${player.id})" class="bg-white rounded-xl shadow-lg p-4 text-center cursor-pointer hover:shadow-xl transition duration-300">
-                        <img src="images/${player.image}" alt="${player.name}" onerror="this.onerror=null;this.src='images/player.jpg';" class="h-32 w-32 object-cover rounded-full mx-auto mb-3 shadow-image">
+                    <div onclick="show('player-profile', '${player.id}')" class="bg-white rounded-xl shadow-lg p-4 text-center cursor-pointer hover:shadow-xl transition duration-300">
+                        <img src="images/${player.image}" alt="${player.name}" onerror="this.onerror=null;this.src='https://placehold.co/128x128/eeeeee/333333?text=${player.name.substring(0,1)}';" class="h-32 w-32 object-cover rounded-full mx-auto mb-3 shadow-image">
                         <h3 class="text-xl font-bold">${player.name}</h3>
                         <p class="text-lg font-extrabold mt-1">التقييم: <span class="${ratingColor}">${displayRating}</span> ⭐</p>
                     </div>
@@ -454,21 +727,46 @@
         }
         
         // 7.2 البحث - فلترة اللاعبين + تفعيل المدير
-        function filterTeam() {
+        window.filterTeam = function() {
             const searchTerm = document.getElementById('player-search').value.trim().toUpperCase();
             
             // ** التحقق من الرمز السري المخفي **
             if (searchTerm === MANAGER_SECRET_CODE.toUpperCase()) {
                 activateManagerMode();
-                return; // لا نستمر في البحث بعد التفعيل
+                return; 
             }
 
             const filtered = players.filter(player => player.name.toLowerCase().includes(searchTerm.toLowerCase()));
             renderTeam(filtered);
         }
 
-        function renderPlayerProfile(id) {
-            const player = players.find(p => p.id === id);
+        // 14. وظيفة تفعيل وضع المدير السرية
+        window.activateManagerMode = function() {
+            if (isManagerMode) return; 
+
+            isManagerMode = true;
+            document.getElementById('manager-link').classList.remove('hidden');
+            document.getElementById('manager-status').classList.remove('hidden');
+            document.getElementById('user-display-name').textContent = "مرحباً، المدير (معرّف: " + userId.substring(0, 8) + "...)";
+            
+            // إظهار رسالة التفعيل العلوية
+            const activationMsg = document.getElementById('activation-message');
+            activationMsg.classList.remove('hidden');
+            setTimeout(() => {
+                activationMsg.classList.add('hidden');
+            }, 3000); 
+            
+            // مسح حقل البحث
+            document.getElementById('player-search').value = '';
+            renderTeam(); 
+
+            // الانتقال إلى لوحة التحكم
+            show('manager-dashboard'); 
+        }
+
+        window.renderPlayerProfile = function(id) {
+            // البحث عن اللاعب باستخدام معرّف Firestore
+            const player = players.find(p => p.id === id); 
             const detailsDiv = document.getElementById('player-details');
             
             if (!player) return;
@@ -479,7 +777,7 @@
             detailsDiv.innerHTML = `
                 <button onclick="show('team')" class="bg-gray-200 text-gray-800 px-4 py-2 rounded mb-6 hover:bg-gray-300 transition">العودة لقائمة الفريق</button>
                 <div class="flex flex-col md:flex-row items-center md:items-start space-x-8 space-x-reverse">
-                    <img src="images/${player.image}" alt="${player.name}" onerror="this.onerror=null;this.src='images/player.jpg';" class="h-40 w-40 object-cover rounded-full shadow-image mb-4 md:mb-0">
+                    <img src="images/${player.image}" alt="${player.name}" onerror="this.onerror=null;this.src='https://placehold.co/160x160/eeeeee/333333?text=${player.name.substring(0,1)}';" class="h-40 w-40 object-cover rounded-full shadow-image mb-4 md:mb-0">
                     <div>
                         <h2 class="text-4xl font-extrabold mb-4 text-gray-900">${player.name}</h2>
                         <div class="grid grid-cols-2 gap-4 text-lg">
@@ -489,13 +787,157 @@
                             <p class="font-black text-[var(--color-success)]">${player.goals} ⚽</p>
                             <p class="font-semibold text-gray-700">التمريرات الحاسمة:</p>
                             <p class="font-black text-gray-800">${player.assists} 🅰️</p> 
+                            <p class="font-semibold text-gray-700">المباريات الملعوبة:</p>
+                            <p class="font-black text-gray-800">${player.matchesPlayed} 🏟️</p> 
                         </div>
                     </div>
                 </div>
             `;
         }
 
-        function addMatch() {
+        // ====== منطق التشكيلة البصرية والإضافة ======
+        
+        // تحديث عرض الملعب بناءً على التشكيلة المختارة
+        window.updateFormationVisualizer = function() {
+            const formation = document.getElementById('match-formation').value;
+            const visualizerDiv = document.getElementById('formation-visualizer');
+            const pitchContainer = document.getElementById('pitch-container');
+            const errorElement = document.getElementById('assignment-error');
+
+            if (!formation) {
+                visualizerDiv.classList.add('hidden');
+                return;
+            }
+
+            visualizerDiv.classList.remove('hidden');
+            errorElement.classList.add('hidden');
+            pitchContainer.innerHTML = '<div class="pitch-line pitch-goal"></div><div class="pitch-line pitch-goal-circle"></div>';
+            
+            // تهيئة حالة التشكيلة الجديدة
+            currentFormationAssignment.formation = formation;
+            currentFormationAssignment.positions = [];
+
+            const coords = FORMATIONS_COORDS[formation];
+
+            // تعبئة الـ positions الجديدة بناءً على الإحداثيات
+            coords.forEach((coord, index) => {
+                currentFormationAssignment.positions.push({
+                    ...coord,
+                    playerId: null,
+                    playerName: null,
+                    playerImage: null,
+                    index: index // لتحديد المركز بسهولة
+                });
+                
+                // إنشاء دائرة المركز (الدائرة التفاعلية)
+                const positionDiv = document.createElement('div');
+                positionDiv.classList.add('player-position');
+                positionDiv.style.right = `${coord.x}%`;
+                positionDiv.style.top = `${coord.y}%`;
+                positionDiv.style.transform = `translate(50%, -50%)`; // لتركيز الدائرة حول الإحداثيات
+                positionDiv.setAttribute('data-index', index);
+                positionDiv.onclick = () => openPositionModal(index);
+                positionDiv.innerHTML = `<span class="text-white text-xs font-bold text-center">${coord.name}</span>`; // عرض اسم المركز مبدئياً
+
+                pitchContainer.appendChild(positionDiv);
+            });
+        }
+        
+        // فتح مودال تعيين اللاعب
+        window.openPositionModal = function(index) {
+            const position = currentFormationAssignment.positions[index];
+            const modal = document.getElementById('player-position-modal');
+            const select = document.getElementById('modal-player-select');
+            
+            // تحديث المؤشر النشط
+            activePositionIndex = index;
+            
+            // تحديث اسم المركز في المودال
+            document.getElementById('modal-position-name').textContent = position.name;
+
+            // إعداد خيارات اللاعبين المتاحين (المستدعين فقط)
+            updatePositionModalOptions();
+            
+            // اختيار اللاعب المعين مسبقاً إن وجد
+            if (position.playerId) {
+                select.value = position.playerId;
+            } else {
+                select.value = "";
+            }
+
+            modal.classList.remove('hidden');
+        }
+
+        // تحديث خيارات اللاعبين في المودال (يتم استدعاؤها أيضاً عند تغيير قائمة المستدعين)
+        function updatePositionModalOptions() {
+            const select = document.getElementById('modal-player-select');
+            const selectedSquadIds = $('#match-squad').val() || [];
+            
+            select.innerHTML = '<option value="">-- اختر لاعبًا --</option>'; // خيار الإزالة أو الافتراضي
+            
+            // إضافة اللاعبين المستدعين فقط كخيارات
+            selectedSquadIds.forEach(playerId => {
+                const player = players.find(p => p.id === playerId);
+                if (player) {
+                     // التحقق من أن اللاعب غير مُعيَّن بالفعل في مركز آخر، إلا إذا كان المركز الحالي هو الذي نقوم بتعيينه له
+                    const isAssigned = currentFormationAssignment.positions.some((pos, idx) => 
+                        pos.playerId === playerId && idx !== activePositionIndex
+                    );
+
+                    if (!isAssigned) {
+                        select.innerHTML += `<option value="${playerId}">${player.name}</option>`;
+                    }
+                }
+            });
+        }
+
+
+        // إغلاق مودال تعيين اللاعب
+        window.closePositionModal = function() {
+            document.getElementById('player-position-modal').classList.add('hidden');
+        }
+
+        // تعيين اللاعب إلى المركز
+        window.assignPlayerToPosition = function() {
+            const select = document.getElementById('modal-player-select');
+            const playerId = select.value;
+            const positionIndex = activePositionIndex;
+            const position = currentFormationAssignment.positions[positionIndex];
+            const positionDiv = document.querySelector(`#pitch-container .player-position[data-index="${positionIndex}"]`);
+
+            if (!position || !positionDiv) return;
+
+            if (playerId) {
+                const player = players.find(p => p.id === playerId);
+                if (player) {
+                    // تحديث حالة التشكيلة المؤقتة
+                    position.playerId = playerId;
+                    position.playerName = player.name;
+                    position.playerImage = player.image;
+
+                    // تحديث الواجهة
+                    positionDiv.innerHTML = `
+                        <img src="images/${player.image}" alt="${player.name}" onerror="this.onerror=null;this.src='https://placehold.co/60x60/eeeeee/333333?text=${player.name.substring(0,1)}';">
+                    `;
+                    positionDiv.style.backgroundColor = 'transparent'; // إزالة لون الخلفية عند إضافة الصورة
+
+                }
+            } else {
+                // إزالة اللاعب
+                position.playerId = null;
+                position.playerName = null;
+                position.playerImage = null;
+                
+                // تحديث الواجهة
+                positionDiv.innerHTML = `<span class="text-white text-xs font-bold text-center">${position.name}</span>`;
+                positionDiv.style.backgroundColor = 'var(--color-primary)';
+            }
+            
+            closePositionModal();
+        }
+
+        // 15. وظيفة إضافة مباراة (تكتب إلى Firestore)
+        window.addMatch = async function() {
             if (!isManagerMode) {
                 alert('يجب تفعيل وضع المدير لإضافة المباريات.');
                 return;
@@ -503,39 +945,54 @@
             
             const opponent = document.getElementById('match-opponent').value;
             const datetime = document.getElementById('match-datetime').value;
-            const pitch = document.getElementById('match-pitch').value;
+            const formation = document.getElementById('match-formation').value;
             const squadIds = $('#match-squad').val() || [];
             
-            if (!opponent || !datetime || !pitch || squadIds.length === 0) {
-                alert('الرجاء إدخال جميع بيانات المباراة (الخصم، التاريخ، صورة الملعب، وتحديد اللاعبين المستدعين).');
+            // التحقق من التشكيلة
+            const assignedPositions = currentFormationAssignment.positions.filter(p => p.playerId !== null);
+            if (assignedPositions.length !== 6) {
+                document.getElementById('assignment-error').classList.remove('hidden');
+                alert('الرجاء تعيين لاعب لجميع المراكز الأساسية (6 لاعبين بما فيهم الحارس).');
+                return;
+            }
+            
+            if (!opponent || !datetime || !formation || squadIds.length === 0) {
+                alert('الرجاء إدخال جميع بيانات المباراة (الخصم، التاريخ، التشكيلة، وتحديد اللاعبين المستدعين).');
                 return;
             }
 
-            const newMatch = {
-                id: Date.now(),
+            const newMatchData = {
                 opponent: opponent,
                 date: datetime,
-                pitch: pitch,
-                squad: squadIds.map(id => parseInt(id)), 
+                formation: formation, // إضافة التشكيلة
+                positions: currentFormationAssignment.positions, // إضافة المراكز واللاعبين المعينين
+                squad: squadIds, 
                 ended: false,
-                stats: null,
-                lineup: "تشكيلة_افتراضية.jpg", 
+                stats: [],
                 opponentGoals: 0, 
-                notes: "" 
+                notes: "",
+                managerId: userId
             };
 
-            matches.unshift(newMatch);
-            renderMatches();
+            try {
+                await addDoc(collection(db, getCollectionPath('matches')), newMatchData);
+                alert('تمت إضافة المباراة بنجاح. سيتم مسح حقول التشكيلة.');
+                
+                // مسح الحقول وإعادة التعيين
+                document.getElementById('match-opponent').value = '';
+                document.getElementById('match-datetime').value = '';
+                document.getElementById('match-formation').value = '';
+                $('#match-squad').val(null).trigger('change'); 
+                document.getElementById('formation-visualizer').classList.add('hidden'); // إخفاء الملعب
+                currentFormationAssignment = { formation: '', positions: [] }; // تصفير الحالة
 
-            document.getElementById('match-opponent').value = '';
-            document.getElementById('match-datetime').value = '';
-            document.getElementById('match-pitch').value = '';
-            $('#match-squad').val(null).trigger('change'); 
-
-            alert('تمت إضافة المباراة بنجاح.');
+            } catch (e) {
+                console.error("Error adding match: ", e);
+                alert('فشل في إضافة المباراة.');
+            }
         }
 
-        function renderMatches() {
+        window.renderMatches = function() {
             const matchesList = document.getElementById('matches-list');
             matchesList.innerHTML = '';
             
@@ -546,8 +1003,14 @@
                 document.getElementById('no-matches-message').classList.add('hidden');
             }
 
+            // الفرز محليًا: المباريات القادمة أولاً، ثم حسب التاريخ (الأحدث أولاً)
+            const sortedMatches = [...matches].sort((a, b) => {
+                if (!a.ended && b.ended) return -1;
+                if (a.ended && !b.ended) return 1;
+                return new Date(b.date) - new Date(a.date);
+            });
 
-            matches.forEach(match => {
+            sortedMatches.forEach(match => {
                 const dateObj = new Date(match.date);
                 const dateStr = dateObj.toLocaleDateString('ar-EG', { year: 'numeric', month: 'long', day: 'numeric' });
                 const timeStr = dateObj.toLocaleTimeString('ar-EG', { hour: '2-digit', minute: '2-digit' });
@@ -559,16 +1022,19 @@
                 let managerButton = '';
                 if (isManagerMode && !match.ended) {
                     managerButton = `
-                        <button onclick="startMatchStats(${match.id})" class="btn-danger text-white text-sm px-3 py-1 rounded ml-3 hover:bg-red-700 transition">إنهاء المباراة</button>
+                        <button onclick="startMatchStats('${match.id}')" class="btn-danger text-white text-sm px-3 py-1 rounded ml-3 hover:bg-red-700 transition">إنهاء المباراة</button>
                     `;
                 }
 
+                // عرض التشكيلة المختارة
+                const formationDisplay = match.formation ? `(${match.formation})` : '';
+
                 const matchCard = `
                     <div class="bg-white p-4 rounded-lg shadow-md hover:shadow-lg transition duration-300 cursor-pointer flex justify-between items-center">
-                        <div onclick="show('match-details', null, ${match.id})" class="flex items-center space-x-4 space-x-reverse w-full">
-                            <img src="images/${match.pitch}" alt="ملعب" class="h-10 w-10 object-cover rounded shadow-image">
+                        <div onclick="show('match-details', null, '${match.id}')" class="flex items-center space-x-4 space-x-reverse w-full">
+                            <span class="text-4xl">⚽</span>
                             <div>
-                                <p class="text-lg font-bold">ضد: ${match.opponent}</p>
+                                <p class="text-lg font-bold">ضد: ${match.opponent} ${formationDisplay}</p>
                                 <p class="text-sm text-gray-600">${dateStr} - ${timeStr}</p>
                             </div>
                         </div>
@@ -582,11 +1048,12 @@
             });
         }
         
-        function renderMatchDetails(id) {
+        // 17. عرض تفاصيل المباراة مع التشكيلة البصرية
+        window.renderMatchDetails = function(id) {
             const match = matches.find(m => m.id === id);
             const matchInfoDiv = document.getElementById('match-info');
             const statsFormDiv = document.getElementById('match-stats-form');
-            activeMatchId = id;
+            activeMatchId = id; 
 
             if (!match) return;
             
@@ -596,38 +1063,28 @@
             const dateStr = dateObj.toLocaleDateString('ar-EG', { year: 'numeric', month: 'long', day: 'numeric' });
             const timeStr = dateObj.toLocaleTimeString('ar-EG', { hour: '2-digit', minute: '2-digit' });
 
-            const squadNames = match.squad.map(id => {
-                const player = players.find(p => p.id === id);
+            const squadNames = match.squad.map(playerId => {
+                const player = players.find(p => p.id === playerId);
                 return player ? player.name : 'لاعب محذوف';
             }).join(' - ');
 
 
-            let statsContent = `
-                <div class="mt-6 border-t pt-4">
-                    <h4 class="text-xl font-bold mb-3">اللاعبون المستدعون (الحضور)</h4>
-                    <p class="text-gray-700 p-3 bg-gray-100 rounded">${squadNames || 'لم يتم تحديد لاعبين مستدعين.'}</p>
-                </div>
-            `;
-            
-            if (!match.ended) {
-                 statsContent += `<p class="text-lg text-red-500 font-semibold mt-4">لم يتم إنهاء المباراة بعد. ${isManagerMode ? '' : ' (لتسجيل الإحصائيات، يجب تفعيل وضع المدير أولاً)'}</p>`;
-            }
-
-
+            let statsContent = '';
             let teamGoals = 0;
             let bestPlayer = 'لا يوجد بعد';
 
-            if (match.ended && match.stats) {
+            if (match.ended && match.stats && match.stats.length > 0) {
+                // دمج بيانات اللاعبين مع إحصائياتهم
                 const playerStats = match.stats.map(s => {
                     const player = players.find(p => p.id === s.playerId);
                     return { ...s, name: player ? player.name : 'لاعب محذوف' };
-                }).sort((a, b) => b.goals - a.goals);
+                });
 
-                if (playerStats.length > 0) {
-                    const topScorer = playerStats[0];
-                    bestPlayer = topScorer.goals > 0 ? topScorer.name : 'لا يوجد';
-                    teamGoals = playerStats.reduce((sum, s) => sum + s.goals, 0);
-                }
+                teamGoals = playerStats.reduce((sum, s) => sum + s.goals, 0);
+                
+                // تحديد أفضل لاعب (تقييم أعلى)
+                const bestRated = [...playerStats].sort((a, b) => b.rating - a.rating)[0];
+                bestPlayer = bestRated.name;
 
                 const goalScorersList = playerStats.filter(s => s.goals > 0 || s.assists > 0).map(s => `<li>${s.name} (${s.goals} أهداف, ${s.assists} تمريرات حاسمة)</li>`).join('');
                 
@@ -643,38 +1100,107 @@
 
                 statsContent = `
                     <div class="mt-6 border-t pt-4">
-                        <h4 class="text-xl font-bold mb-3">اللاعبون المستدعون (الحضور)</h4>
-                        <p class="text-gray-700 p-3 bg-gray-100 rounded">${squadNames || 'لم يتم تحديد لاعبين مستدعين.'}</p>
-
-                        <h4 class="text-xl font-bold mb-3 mt-6 border-t pt-4">إحصائيات المباراة النهائية</h4>
+                        <h4 class="text-xl font-bold mb-3">إحصائيات المباراة النهائية</h4>
                         <div class="grid grid-cols-2 gap-4 text-lg">
                             <p class="font-semibold text-gray-700">نتيجة المباراة:</p>
                             <p class="font-black text-2xl ${resultColor}">${teamGoals} - ${match.opponentGoals} (${resultText})</p>
-                            <p class="font-semibold text-gray-700">أفضل هداف:</p>
-                            <p class="font-black text-green-700">${bestPlayer} ⚽</p>
+                            <p class="font-semibold text-gray-700">أفضل لاعب (تقييم):</p>
+                            <p class="font-black text-green-700">${bestPlayer} ⭐</p>
                         </div>
                         
                         <h5 class="text-lg font-semibold mt-4 mb-2">الهدافون والإحصائيات:</h5>
-                        <ul class="list-disc pr-8 text-gray-700">${goalScorersList || '<li>لم تسجل إحصائيات.</li>'}</ul>
+                        <ul class="list-disc pr-8 text-gray-700">${goalScorersList || '<li>لم تسجل إحصائيات هجومية.</li>'}</ul>
                         
                         <h5 class="text-lg font-semibold mt-4 mb-2">ملاحظات المدير:</h5>
                         <p class="text-gray-700 p-3 bg-gray-100 rounded">${match.notes || 'لا توجد ملاحظات مسجلة.'}</p>
                     </div>
                 `;
+            } else {
+                 statsContent = `<div class="mt-6 border-t pt-4"><p class="text-lg text-red-500 font-semibold">لم يتم إنهاء المباراة بعد.</p></div>`;
             }
 
             matchInfoDiv.innerHTML = `
                 <button onclick="show('matches')" class="bg-gray-200 text-gray-800 px-4 py-2 rounded mb-6 hover:bg-gray-300 transition">العودة لقائمة المباريات</button>
                 <div class="text-center">
-                    <h2 class="text-4xl font-extrabold mb-2 text-gray-900">مباراة ضد ${match.opponent}</h2>
+                    <h2 class="text-4xl font-extrabold mb-2 text-gray-900">مباراة ضد ${match.opponent} (${match.formation})</h2>
                     <p class="text-xl text-gray-600 mb-6">${dateStr} - ${timeStr}</p>
-                    <img src="images/${match.lineup}" alt="صورة التشكيلة" class="mx-auto rounded-xl shadow-image max-h-96 w-full object-cover">
+                    
+                    <h3 class="text-2xl font-black mb-4 border-b pb-2">التشكيلة الأساسية</h3>
+                    <div id="match-pitch-display" class="relative">
+                        <!-- هنا سيتم عرض الملعب البصري مع التقييمات -->
+                    </div>
+
                     ${statsContent}
+
+                    <div class="mt-6 border-t pt-4">
+                        <h4 class="text-xl font-bold mb-3">اللاعبون المستدعون (الحضور)</h4>
+                        <p class="text-gray-700 p-3 bg-gray-100 rounded">${squadNames || 'لم يتم تحديد لاعبين مستدعين.'}</p>
+                    </div>
                 </div>
             `;
+            // عرض التشكيلة في صفحة التفاصيل
+            renderVisualPitch(match, 'match-pitch-display'); 
         }
 
-        function startMatchStats(id) {
+        // دالة لعرض الملعب البصري (لصفحة التفاصيل)
+        function renderVisualPitch(match, containerId) {
+            const container = document.getElementById(containerId);
+            container.innerHTML = `<div id="pitch-container" class="relative">
+                <div class="pitch-line pitch-goal"></div>
+                <div class="pitch-line pitch-goal-circle"></div>
+            </div>`;
+            const pitch = container.querySelector('#pitch-container');
+
+            if (!match.positions || match.positions.length === 0) {
+                pitch.innerHTML += `<p class="text-white text-center absolute top-1/2 left-0 right-0 transform -translate-y-1/2">لم يتم تعيين تشكيلة أساسية.</p>`;
+                return;
+            }
+
+            // عرض دوائر اللاعبين والمراكز
+            match.positions.forEach(pos => {
+                const playerDiv = document.createElement('div');
+                playerDiv.classList.add('player-position', 'pointer-events-none'); // غير تفاعلي هنا
+                playerDiv.style.right = `${pos.x}%`;
+                playerDiv.style.top = `${pos.y}%`;
+                playerDiv.style.transform = `translate(50%, -50%)`;
+                
+                let innerContent = '';
+                let bgColor = pos.type === 'GK' ? 'bg-red-500' : 'bg-[var(--color-primary)]'; // لون مختلف للحارس
+                
+                if (pos.playerId) {
+                    const player = players.find(p => p.id === pos.playerId);
+                    const imageName = player ? player.image : 'player.jpg';
+                    const nameInitial = player ? player.name.substring(0,1) : 'U';
+
+                    innerContent = `
+                         <img src="images/${imageName}" alt="${pos.playerName}" 
+                         onerror="this.onerror=null;this.src='https://placehold.co/60x60/eeeeee/333333?text=${nameInitial}';">
+                    `;
+                    bgColor = 'transparent'; 
+                    
+                    // إذا انتهت المباراة، اعرض التقييم
+                    if (match.ended && match.stats) {
+                        const playerStat = match.stats.find(s => s.playerId === pos.playerId);
+                        if (playerStat) {
+                             const rating = playerStat.rating.toFixed(1);
+                             const ratingColor = rating >= 8.0 ? 'bg-yellow-500' : 'bg-green-600';
+                             innerContent += `<span class="rating-badge ${ratingColor}">${rating}</span>`;
+                        }
+                    }
+
+                } else {
+                    innerContent = `<span class="text-white text-xs font-bold text-center">${pos.name}</span>`;
+                }
+                
+                playerDiv.style.backgroundColor = bgColor;
+                playerDiv.innerHTML = innerContent;
+                pitch.appendChild(playerDiv);
+            });
+        }
+
+
+        // 16. بدء نموذج تسجيل الإحصائيات (لم يتغير المنطق)
+        window.startMatchStats = function(id) {
             const match = matches.find(m => m.id === id);
             if (!isManagerMode || match.ended) {
                 alert('يجب تفعيل وضع المدير أولاً لإنهاء المباراة.');
@@ -693,15 +1219,19 @@
             const statsInputsDiv = document.getElementById('player-stats-inputs-form');
             statsInputsDiv.innerHTML = ''; 
 
+            // ربط حقل الأهداف الكلي لتحديثه عند الإدخال
+            document.getElementById('player-stats-inputs-form').oninput = updateOurGoals;
+            
             match.squad.forEach(playerId => {
                 const player = players.find(p => p.id === playerId);
                 if (player) {
+                    // نستخدم player.id (معرّف Firestore)
                     const inputGroup = `
                         <div class="p-3 border rounded-lg bg-white grid grid-cols-4 gap-4 items-center">
                             <span class="font-bold text-lg">${player.name}</span>
                             <div>
                                 <label for="goals-form-${playerId}" class="block text-xs font-medium text-gray-500">أهداف</label>
-                                <input type="number" id="goals-form-${playerId}" value="0" min="0" oninput="updateOurGoals()" class="w-full p-1 border rounded text-center font-bold">
+                                <input type="number" id="goals-form-${playerId}" value="0" min="0" class="w-full p-1 border rounded text-center font-bold">
                             </div>
                             <div>
                                 <label for="assists-form-${playerId}" class="block text-xs font-medium text-gray-500">تمريرات حاسمة</label>
@@ -720,11 +1250,12 @@
             updateOurGoals(); 
         }
 
-        function updateOurGoals() {
+        window.updateOurGoals = function() {
             let totalGoals = 0;
             const match = matches.find(m => m.id === activeMatchId);
             if (!match) return;
 
+            // نستخدم قائمة المستدعين للمباراة
             match.squad.forEach(playerId => {
                 const goalsInput = document.getElementById(`goals-form-${playerId}`);
                 totalGoals += parseInt(goalsInput?.value) || 0; 
@@ -732,7 +1263,8 @@
             document.getElementById('our-goals-display-form').textContent = totalGoals;
         }
 
-        function saveMatchStats() {
+        // 17. حفظ إحصائيات المباراة وتحديث اللاعبين (تكتب إلى Firestore)
+        window.saveMatchStats = async function() {
             if (!isManagerMode || activeMatchId === null) return; 
 
             const match = matches.find(m => m.id === activeMatchId);
@@ -743,6 +1275,7 @@
             const newStats = [];
             let playersCounted = 0;
 
+            // 1. جمع الإحصائيات
             match.squad.forEach(playerId => {
                 const goalsInput = document.getElementById(`goals-form-${playerId}`);
                 const assistsInput = document.getElementById(`assists-form-${playerId}`);
@@ -753,7 +1286,7 @@
                 const rating = parseFloat(ratingInput.value);
 
                 if (rating >= 1 && rating <= 10) {
-                    newStats.push({ playerId, goals, assists, rating });
+                    newStats.push({ playerId, goals, assists, rating }); // playerId هنا هو معرّف Firestore
                     playersCounted++;
                 }
             });
@@ -763,37 +1296,57 @@
                 return;
             }
 
-            match.ended = true;
-            match.opponentGoals = opponentGoals;
-            match.notes = notes;
-            match.stats = newStats;
-
-            newStats.forEach(stats => {
-                const player = players.find(p => p.id === stats.playerId);
-                if (player) {
-                    const playerMatchesBefore = matches.filter(m => m.ended && m.squad.includes(player.id) && m.id !== match.id).length;
-                    
-                    const totalMatches = playerMatchesBefore + 1;
-
-                    if (totalMatches <= 1) {
-                         player.rating = stats.rating;
-                    } else {
-                        const totalRatingSum = (player.rating * playerMatchesBefore) + stats.rating;
-                        player.rating = totalRatingSum / totalMatches;
-                    }
-                    
-                    player.goals += stats.goals;
-                    player.assists += stats.assists;
-                }
-            });
-
-            renderMatchDetails(activeMatchId);
-            renderTeam(); 
-            renderMatches();
+            // 2. تحديث وثيقة المباراة في Firestore
+            const matchRef = doc(db, getCollectionPath('matches'), activeMatchId);
+            const matchUpdateData = {
+                ended: true,
+                opponentGoals: opponentGoals,
+                notes: notes,
+                stats: newStats
+            };
             
+            try {
+                await updateDoc(matchRef, matchUpdateData);
+            } catch (e) {
+                console.error("Error updating match document: ", e);
+                alert('فشل في حفظ إحصائيات المباراة.');
+                return; 
+            }
+
+            // 3. تحديث إحصائيات اللاعبين في Firestore
+            for (const stats of newStats) {
+                const playerRef = doc(db, getCollectionPath('players'), stats.playerId);
+                const playerDoc = await getDoc(playerRef);
+                const player = playerDoc.data();
+                
+                if (player) {
+                    const currentMatches = player.matchesPlayed || 0;
+                    const newMatches = currentMatches + 1;
+                    
+                    // حساب التقييم الجديد (متوسط موزون)
+                    const totalRatingSum = (player.rating * currentMatches) + stats.rating;
+                    const newRating = totalRatingSum / newMatches;
+
+                    const playerUpdateData = {
+                        rating: newRating,
+                        goals: player.goals + stats.goals,
+                        assists: player.assists + stats.assists,
+                        matchesPlayed: newMatches
+                    };
+
+                    try {
+                        await updateDoc(playerRef, playerUpdateData);
+                    } catch (e) {
+                        console.error(`Failed to update player ${stats.playerId}:`, e);
+                    }
+                }
+            }
+
             alert('تم حفظ الإحصائيات وإنهاء المباراة بنجاح.');
             document.getElementById('match-stats-form').classList.add('hidden');
+            // لا حاجة لـ render يدويًا، onSnapshot سيتولى الأمر
         }
     </script>
 </body>
 </html>
+    
